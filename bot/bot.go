@@ -7,7 +7,7 @@ import (
 	"gopkg.in/telebot.v3"
 )
 
-type UpgradeBot struct {
+type ModifiedBot struct {
 	Bot *telebot.Bot
 }
 
@@ -26,6 +26,6 @@ func InitBot(token string) *telebot.Bot {
 	return b
 }
 
-func (bot *UpgradeBot) HelloHandler(ctx telebot.Context) error {
+func (bot *ModifiedBot) HelloHandler(ctx telebot.Context) error {
 	return ctx.Send("Hello " + ctx.Sender().FirstName)
 }
