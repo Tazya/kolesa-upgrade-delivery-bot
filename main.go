@@ -25,10 +25,10 @@ func main() {
 		log.Fatalf("Ошибка декодирования файла конфигов %v", err)
 	}
 
-	upgradeBot := bot.UpgradeBot{
+	modifiedBot := bot.ModifiedBot{
 		Bot: bot.InitBot(cfg.BotToken),
 	}
 
-	upgradeBot.Bot.Handle("/hello", upgradeBot.HelloHandler)
-	upgradeBot.Bot.Start()
+	modifiedBot.Bot.Handle("/hello", modifiedBot.HelloHandler)
+	modifiedBot.Bot.Start()
 }
