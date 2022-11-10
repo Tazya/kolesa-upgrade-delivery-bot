@@ -12,7 +12,6 @@ import (
 
 func main() {
 	configPath := flag.String("config", "", "Path to config file")
-	botConfigPath := flag.String("botConfig", "", "Path to config file")
 	flag.Parse()
 
 	var wg sync.WaitGroup
@@ -31,7 +30,7 @@ func main() {
 		wg.Done()
 	}()
 	go func() {
-		bot.LaunchBot(botConfigPath)
+		bot.LaunchBot(cfg)
 		wg.Done()
 	}()
 	wg.Wait()

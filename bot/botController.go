@@ -1,25 +1,10 @@
 package bot
 
 import (
-	"log"
-
-	"github.com/BurntSushi/toml"
+	"kolesa-upgrade-team/delivery-bot/internal/config"
 )
 
-type Config struct {
-	Env      string
-	BotToken string
-	Dsn      string
-}
-
-func LaunchBot(configPath *string) {
-
-	cfg := &Config{}
-	_, err := toml.DecodeFile(*configPath, cfg)
-
-	if err != nil {
-		log.Fatalf("Ошибка декодирования файла конфигов %v", err)
-	}
+func LaunchBot(cfg *config.Config) {
 
 	modifiedBot := ModifiedBot{
 		Bot: InitBot(cfg.BotToken),
