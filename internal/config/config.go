@@ -5,7 +5,10 @@ import (
 )
 
 type Config struct {
-	Addr string
+	Addr     string
+	Env      string
+	BotToken string
+	Dsn      string
 }
 
 func NewConfig(configPath string) (*Config, error) {
