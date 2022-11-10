@@ -1,7 +1,6 @@
 package bot
 
 import (
-	"flag"
 	"log"
 
 	"github.com/BurntSushi/toml"
@@ -13,9 +12,7 @@ type Config struct {
 	Dsn      string
 }
 
-func LaunchBot() {
-	configPath := flag.String("config", "", "Path to config file")
-	flag.Parse()
+func LaunchBot(configPath *string) {
 
 	cfg := &Config{}
 	_, err := toml.DecodeFile(*configPath, cfg)
