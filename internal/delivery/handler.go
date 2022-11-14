@@ -30,6 +30,7 @@ func NewHandler(sender usecase.Sender) *Handler {
 
 func (h *Handler) InitRoutes(mux *http.ServeMux) {
 	mux.HandleFunc("/health", h.handleHealth)
+	mux.HandleFunc("/messages/sendAll", h.SendAll)
 }
 
 func (h *Handler) handleHealth(w http.ResponseWriter, r *http.Request) {
