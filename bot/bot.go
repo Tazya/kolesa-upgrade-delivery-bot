@@ -1,8 +1,8 @@
 package bot
 
 import (
-	"kolesa-upgrade-team/delivery-bot/internal/delivery"
 	"kolesa-upgrade-team/delivery-bot/internal/models"
+	"kolesa-upgrade-team/delivery-bot/usecase"
 	"log"
 	"time"
 
@@ -14,10 +14,9 @@ type ModifiedBot struct {
 	user *models.UserModel
 }
 
-
-func NewModifiedBot(bot *telebot.Bot, u *models.UserModel) *ModifiedBot{
+func NewModifiedBot(bot *telebot.Bot, u *models.UserModel) *ModifiedBot {
 	return &ModifiedBot{
-		Bot: bot,
+		Bot:  bot,
 		user: u,
 	}
 }
@@ -41,7 +40,7 @@ func (bot *ModifiedBot) HelloHandler(ctx telebot.Context) error {
 	return ctx.Send("Hello " + ctx.Sender().FirstName)
 }
 
-func (bot *ModifiedBot) SendAll(msg delivery.SendAllRequest) error {
+func (bot *ModifiedBot) SendAll(msg usecase.Message) error {
 	users, err := bot.user.GetAllUsers()
 	if err != nil {
 		return err

@@ -3,6 +3,8 @@ package delivery
 import (
 	"encoding/json"
 	"net/http"
+
+	"kolesa-upgrade-team/delivery-bot/usecase"
 )
 
 type StatusResponse struct {
@@ -19,10 +21,10 @@ type Sender interface {
 }
 
 type Handler struct {
-	sender Sender
+	sender usecase.Sender
 }
 
-func NewHandler(sender Sender) *Handler {
+func NewHandler(sender usecase.Sender) *Handler {
 	return &Handler{sender: sender}
 }
 
@@ -53,7 +55,7 @@ func (h *Handler) SendAll(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 		return
 	}
-	var reqBody SendAllRequest
+	var reqBody usecase.Message
 	if err := json.NewDecoder(r.Body).Decode(&reqBody); err != nil {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return

@@ -8,7 +8,10 @@ require (
 	gorm.io/gorm v1.24.1
 )
 
-require github.com/mattn/go-sqlite3 v1.14.15 // indirect
+require (
+	github.com/go-sql-driver/mysql v1.6.0 // indirect
+	github.com/mattn/go-sqlite3 v1.14.15 // indirect
+)
 
 require (
 	github.com/jinzhu/inflection v1.0.0 // indirect
