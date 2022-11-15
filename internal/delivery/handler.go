@@ -3,21 +3,34 @@ package delivery
 import (
 	"encoding/json"
 	"net/http"
+
+	"kolesa-upgrade-team/delivery-bot/usecase"
 )
 
 type StatusResponse struct {
 	Status string `json:"status"`
 }
 
-type Handler struct {
+type SendAllRequest struct {
+	Title string `json:"title"`
+	Body  string `json:"body"`
 }
 
-func NewHandler() *Handler {
-	return &Handler{}
+type Sender interface {
+	SendAll(msg SendAllRequest) error
+}
+
+type Handler struct {
+	sender usecase.Sender
+}
+
+func NewHandler(sender usecase.Sender) *Handler {
+	return &Handler{sender: sender}
 }
 
 func (h *Handler) InitRoutes(mux *http.ServeMux) {
 	mux.HandleFunc("/health", h.handleHealth)
+	mux.HandleFunc("/messages/sendAll", h.SendAll)
 }
 
 func (h *Handler) handleHealth(w http.ResponseWriter, r *http.Request) {
@@ -36,4 +49,34 @@ func (h *Handler) handleHealth(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(res)
+}
+
+func (h *Handler) SendAll(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
+		return
+	}
+	var reqBody usecase.Message
+	if err := json.NewDecoder(r.Body).Decode(&reqBody); err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+	defer r.Body.Close()
+
+	if reqBody.Body == "" {
+		http.Error(w, "Bad Request. Message must have body", http.StatusBadRequest)
+		return
+	}
+
+	if err := h.sender.SendAll(reqBody); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	res := StatusResponse{
+		Status: "OK",
+	}
+
+	json.NewEncoder(w).Encode(res)
+
 }
