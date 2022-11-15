@@ -59,8 +59,9 @@ func (bot *ModifiedBot) StartHandler(ctx telebot.Context) error {
         err := bot.Users.Create(newUser)
 
         if err != nil {
-            log.Printf("Ошибка создания пользователя %v", err)
+			return ctx.Send("Ошибка при создании пользователя...")
         }
+		ctx.Send("Пользователь успешно создан!")
     }
 
     return ctx.Send("Привет, " + ctx.Sender().FirstName)

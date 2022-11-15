@@ -25,7 +25,9 @@ func main() {
 	}
 
 	db, err := gorm.Open(mysql.Open(cfg.Dsn), &gorm.Config{})
-
+	if err != nil {
+		log.Fatalf("database initialization error: %s\n", err)
+	}
 	b := bot.NewModifiedBot(bot.InitBot(cfg.BotToken), &models.UserModel{Db: db})
 
 	handler := delivery.NewHandler(b)
