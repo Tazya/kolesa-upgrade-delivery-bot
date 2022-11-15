@@ -1,6 +1,9 @@
 package models
 
-import "gorm.io/gorm"
+import (
+	"gorm.io/gorm"
+	"strconv"
+)
 
 type User struct {
 	gorm.Model
@@ -16,10 +19,13 @@ type UserModel struct {
 }
 
 func (m *UserModel) Create(user User) error {
-
 	result := m.Db.Create(&user)
 
 	return result.Error
+}
+
+func (u *User) Recipient() string {
+	return strconv.Itoa(int(u.ChatId))
 }
 
 func (m *UserModel) GetAllUsers() ([]User, error) {

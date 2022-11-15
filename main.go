@@ -31,10 +31,6 @@ func main() {
 	handler := delivery.NewHandler(b)
 	server := server.NewServer(*cfg, handler)
 
-	if err != nil {
-		log.Fatalf("Ошибка подключения к БД %v", err)
-	}
-
 	log.Printf("Starting server...\nhttp://localhost:%v\n", cfg.Addr)
 	wg.Add(2)
 	go func() {
