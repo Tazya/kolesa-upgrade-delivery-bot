@@ -25,15 +25,14 @@ func main() {
 	}
 
 	db, err := gorm.Open(sqlite.Open(cfg.Dsn), &gorm.Config{})
+	if err != nil {
+		log.Fatalf("Ошибка подключения к БД %v", err)
+	}
 
 	b := bot.NewModifiedBot(bot.InitBot(cfg.BotToken), &models.UserModel{Db: db})
 
 	handler := delivery.NewHandler(b)
 	server := server.NewServer(*cfg, handler)
-
-	if err != nil {
-		log.Fatalf("Ошибка подключения к БД %v", err)
-	}
 
 	log.Printf("Starting server...\nhttp://localhost:%v\n", cfg.Addr)
 	wg.Add(2)
