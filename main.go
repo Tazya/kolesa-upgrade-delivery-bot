@@ -26,6 +26,7 @@ func main() {
 
 	db, err := gorm.Open(sqlite.Open(cfg.Dsn), &gorm.Config{})
 	if err != nil {
+		log.Println("config path", *configPath)
 		log.Fatalf("Ошибка подключения к БД %v", err)
 	}
 

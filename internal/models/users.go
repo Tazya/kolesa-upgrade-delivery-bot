@@ -1,8 +1,10 @@
 package models
 
 import (
-	"gorm.io/gorm"
+	"log"
 	"strconv"
+
+	"gorm.io/gorm"
 )
 
 type User struct {
@@ -31,8 +33,9 @@ func (u *User) Recipient() string {
 func (m *UserModel) GetAllUsers() ([]User, error) {
 	var users []User
 
-	res := m.Db.Find(users)
+	res := m.Db.Find(&users)
 	if res.Error != nil {
+		log.Println(res.Error.Error())
 		return nil, res.Error
 	}
 

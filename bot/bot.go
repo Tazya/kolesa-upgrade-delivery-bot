@@ -1,6 +1,7 @@
 package bot
 
 import (
+	"fmt"
 	"kolesa-upgrade-team/delivery-bot/internal/models"
 	"kolesa-upgrade-team/delivery-bot/usecase"
 	"log"
@@ -46,10 +47,13 @@ func (bot *ModifiedBot) SendAll(msg usecase.Message) error {
 		return err
 	}
 
+	log.Println("len of users:", len(users))
+
 	for _, user := range users {
 		u := user
-		_, err := bot.Bot.Send(&u, msg)
+		_, err := bot.Bot.Send(&u, fmt.Sprintf("title: %s\nbody: %s", msg.Title, msg.Body))
 		if err != nil {
+			log.Println(err.Error())
 			return err
 		}
 	}
