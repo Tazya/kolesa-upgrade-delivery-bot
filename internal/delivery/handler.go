@@ -52,6 +52,7 @@ func (h *Handler) handleHealth(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) SendAll(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
 	if r.Method != http.MethodPost {
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 		return
@@ -69,9 +70,17 @@ func (h *Handler) SendAll(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := h.sender.SendAll(reqBody); err != nil {
+		
+		responseError := map[string]string{
+			"status": "error",
+			"error":  err.Error(),
+		}
+		jsonResp, _ := json.Marshal(responseError)
+		w.Write(jsonResp)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+	
 
 	res := StatusResponse{
 		Status: "OK",

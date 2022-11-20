@@ -1,4 +1,4 @@
-Env="local"
-Addr="8888"
-BotToken="5561065502:AAHLfhFLnSOGPUek7SogrvRU-drPTaj-N9A"
-Dsn="tasks.db"
+Env=""
+Addr=""
+Dsn=""
+BotToken=""

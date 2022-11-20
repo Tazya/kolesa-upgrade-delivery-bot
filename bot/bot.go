@@ -47,7 +47,6 @@ func (bot *ModifiedBot) SendAll(msg usecase.Message) error {
 		return err
 	}
 
-	log.Println("len of users:", len(users))
 
 	for _, user := range users {
 		u := user
