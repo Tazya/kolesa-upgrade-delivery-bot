@@ -77,7 +77,7 @@ func (h *Handler) SendAll(w http.ResponseWriter, r *http.Request) {
 		}
 		jsonResp, _ := json.Marshal(responseError)
 		w.Write(jsonResp)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		// http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	
