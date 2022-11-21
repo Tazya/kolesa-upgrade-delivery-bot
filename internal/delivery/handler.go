@@ -58,6 +58,7 @@ func (h *Handler) SendAll(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var reqBody usecase.Message
+	
 	if err := json.NewDecoder(r.Body).Decode(&reqBody); err != nil {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
@@ -70,7 +71,7 @@ func (h *Handler) SendAll(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := h.sender.SendAll(reqBody); err != nil {
-		
+
 		responseError := map[string]string{
 			"status": "error",
 			"error":  err.Error(),
@@ -80,12 +81,10 @@ func (h *Handler) SendAll(w http.ResponseWriter, r *http.Request) {
 		// http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	
 
 	res := StatusResponse{
 		Status: "OK",
 	}
 
 	json.NewEncoder(w).Encode(res)
-
 }
