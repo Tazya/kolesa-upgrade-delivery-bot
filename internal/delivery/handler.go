@@ -9,7 +9,9 @@ import (
 
 type StatusResponse struct {
 	Status string `json:"status"`
+	Error string `json:"error,omitempty"` 
 }
+
 
 type SendAllRequest struct {
 	Title string `json:"title"`
@@ -34,6 +36,7 @@ func (h *Handler) InitRoutes(mux *http.ServeMux) {
 }
 
 func (h *Handler) handleHealth(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
 	if r.Method != http.MethodGet {
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 		return
@@ -52,6 +55,9 @@ func (h *Handler) handleHealth(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) SendAll(w http.ResponseWriter, r *http.Request) {
+	res := StatusResponse{
+		Status: "OK",
+	}
 	w.Header().Set("Content-Type", "application/json")
 	if r.Method != http.MethodPost {
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
@@ -66,25 +72,28 @@ func (h *Handler) SendAll(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 
 	if reqBody.Body == "" {
-		http.Error(w, "Bad Request. Message must have body", http.StatusBadRequest)
+		res.Status = "error"
+		res.Error = "Bad Request. Message must have body"
+		json.NewEncoder(w).Encode(res)
 		return
 	}
 
 	if err := h.sender.SendAll(reqBody); err != nil {
 
-		responseError := map[string]string{
-			"status": "error",
-			"error":  err.Error(),
-		}
-		jsonResp, _ := json.Marshal(responseError)
-		w.Write(jsonResp)
+		res.Status = "error"
+		res.Error = err.Error()
+		json.NewEncoder(w).Encode(res)
+		// responseError := map[string]string{
+		// 	"status": "error",
+		// 	"error":  err.Error(),
+		// }
+		// jsonResp, _ := json.Marshal(responseError)
+		// w.Write(jsonResp)
 		// http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	res := StatusResponse{
-		Status: "OK",
-	}
+	
 
 	json.NewEncoder(w).Encode(res)
 }
