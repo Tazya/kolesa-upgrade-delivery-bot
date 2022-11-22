@@ -68,18 +68,20 @@ func (bot *ModifiedBot) StartHandler(ctx telebot.Context) error {
 }
 
 func (bot *ModifiedBot) SendAll(msg usecase.Message) error {
-	users, err := bot.Users.GetAllUsers()
-	if err != nil {
-		return err
-	}
+	// users, err := bot.user.GetAllUsers()
+	// if err != nil {
+	// 	return err
+	// }
 
-	for _, user := range users {
-		u := user
-		_, err := bot.Bot.Send(&u, msg)
-		if err != nil {
-			return err
-		}
-	}
 
+
+	// for _, user := range users {
+	// 	u := user
+	// 	_, err := bot.Bot.Send(&u, fmt.Sprintf("title: %s\nbody: %s", msg.Title, msg.Body))
+	// 	if err != nil {
+	// 		log.Println(err.Error())
+	// 		return err
+	// 	}
+	// }
 	return nil
 }
