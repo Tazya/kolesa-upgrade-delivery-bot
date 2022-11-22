@@ -52,11 +52,13 @@ func (h *Handler) handleHealth(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) SendAll(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
 	if r.Method != http.MethodPost {
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 		return
 	}
 	var reqBody usecase.Message
+	
 	if err := json.NewDecoder(r.Body).Decode(&reqBody); err != nil {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
@@ -69,7 +71,14 @@ func (h *Handler) SendAll(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := h.sender.SendAll(reqBody); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+
+		responseError := map[string]string{
+			"status": "error",
+			"error":  err.Error(),
+		}
+		jsonResp, _ := json.Marshal(responseError)
+		w.Write(jsonResp)
+		// http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -78,5 +87,4 @@ func (h *Handler) SendAll(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(res)
-
 }
