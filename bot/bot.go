@@ -11,13 +11,13 @@ import (
 
 type ModifiedBot struct {
 	Bot  *telebot.Bot
-	user *models.UserModel
+	Users *models.UserModel
 }
 
 func NewModifiedBot(bot *telebot.Bot, u *models.UserModel) *ModifiedBot {
 	return &ModifiedBot{
 		Bot:  bot,
-		user: u,
+		Users: u,
 	}
 }
 
@@ -40,11 +40,40 @@ func (bot *ModifiedBot) HelloHandler(ctx telebot.Context) error {
 	return ctx.Send("Hello " + ctx.Sender().FirstName)
 }
 
+func (bot *ModifiedBot) StartHandler(ctx telebot.Context) error {
+    newUser := models.User{
+        Name:       ctx.Sender().Username,
+        TelegramId: ctx.Chat().ID,
+        FirstName:  ctx.Sender().FirstName,
+        LastName:   ctx.Sender().LastName,
+        ChatId:     ctx.Chat().ID,
+    }
+
+    existUser, err := bot.Users.FindOne(ctx.Chat().ID)
+
+    if err != nil {
+        log.Printf("Ошибка получения пользователя %v", err)
+    }
+
+    if existUser == nil {
+        err := bot.Users.Create(newUser)
+
+        if err != nil {
+			return ctx.Send("Ошибка при создании пользователя...")
+        }
+		ctx.Send("Пользователь успешно создан!")
+    }
+
+    return ctx.Send("Привет, " + ctx.Sender().FirstName)
+}
+
 func (bot *ModifiedBot) SendAll(msg usecase.Message) error {
 	// users, err := bot.user.GetAllUsers()
 	// if err != nil {
 	// 	return err
 	// }
+
+
 
 	// for _, user := range users {
 	// 	u := user
@@ -54,6 +83,5 @@ func (bot *ModifiedBot) SendAll(msg usecase.Message) error {
 	// 		return err
 	// 	}
 	// }
-
 	return nil
 }

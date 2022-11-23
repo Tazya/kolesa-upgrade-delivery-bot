@@ -9,7 +9,9 @@ import (
 
 type StatusResponse struct {
 	Status string `json:"status"`
+	Error string `json:"error,omitempty"` 
 }
+
 
 type SendAllRequest struct {
 	Title string `json:"title"`
@@ -34,57 +36,64 @@ func (h *Handler) InitRoutes(mux *http.ServeMux) {
 }
 
 func (h *Handler) handleHealth(w http.ResponseWriter, r *http.Request) {
+	res := StatusResponse{
+		Status: "OK",
+	}
+	w.Header().Set("Content-Type", "application/json")
 	if r.Method != http.MethodGet {
-		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
+		res.Status = "error"
+		res.Error = "Method Not Allowed"
+		json.NewEncoder(w).Encode(res)
 		return
 	}
 
 	if r.URL.Path != "/health" {
-		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
+		res.Status = "error"
+		res.Error = "Status Not Found"
+		json.NewEncoder(w).Encode(res)
 		return
-	}
-
-	res := StatusResponse{
-		Status: "OK",
 	}
 
 	json.NewEncoder(w).Encode(res)
 }
 
 func (h *Handler) SendAll(w http.ResponseWriter, r *http.Request) {
+	res := StatusResponse{
+		Status: "OK",
+	}
 	w.Header().Set("Content-Type", "application/json")
 	if r.Method != http.MethodPost {
-		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
+		res.Status = "error"
+		res.Error = "Method Not Allowed"
+		json.NewEncoder(w).Encode(res)
 		return
 	}
 	var reqBody usecase.Message
 	
 	if err := json.NewDecoder(r.Body).Decode(&reqBody); err != nil {
-		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		res.Status = "error"
+		res.Error = "Bad Request"
+		json.NewEncoder(w).Encode(res)
 		return
 	}
 	defer r.Body.Close()
 
 	if reqBody.Body == "" {
-		http.Error(w, "Bad Request. Message must have body", http.StatusBadRequest)
+		res.Status = "error"
+		res.Error = "Bad Request. Message must have body"
+		json.NewEncoder(w).Encode(res)
 		return
 	}
 
 	if err := h.sender.SendAll(reqBody); err != nil {
 
-		responseError := map[string]string{
-			"status": "error",
-			"error":  err.Error(),
-		}
-		jsonResp, _ := json.Marshal(responseError)
-		w.Write(jsonResp)
-		// http.Error(w, err.Error(), http.StatusInternalServerError)
+		res.Status = "error"
+		res.Error = err.Error()
+		json.NewEncoder(w).Encode(res)
 		return
 	}
 
-	res := StatusResponse{
-		Status: "OK",
-	}
+	
 
 	json.NewEncoder(w).Encode(res)
 }

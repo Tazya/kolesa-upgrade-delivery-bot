@@ -41,3 +41,15 @@ func (m *UserModel) GetAllUsers() ([]User, error) {
 
 	return users, nil
 }
+
+func (m *UserModel) FindOne(telegramId int64) (*User, error) {
+	existUser := User{}
+	result := m.Db.First(&existUser, User{TelegramId: telegramId})
+		
+
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return &existUser, nil
+}

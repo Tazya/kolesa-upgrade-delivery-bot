@@ -1,4 +1,4 @@
 Env="local"
 Addr="8888"
-Dsn="delivery.db"
 BotToken=""
+Dsn="username:password@tcp(localhost:3306)/dbName?parseTime=true"

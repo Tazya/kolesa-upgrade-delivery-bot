@@ -10,7 +10,7 @@ import (
 	"log"
 	"sync"
 
-	"gorm.io/driver/sqlite"
+	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
 
@@ -24,12 +24,10 @@ func main() {
 		log.Fatalf("config: %s\n", err)
 	}
 
-	db, err := gorm.Open(sqlite.Open(cfg.Dsn), &gorm.Config{})
+	db, err := gorm.Open(mysql.Open(cfg.Dsn), &gorm.Config{})
 	if err != nil {
-		log.Println("config path", *configPath)
-		log.Fatalf("Ошибка подключения к БД %v", err)
+		log.Fatalf("database initialization error: %s\n", err)
 	}
-
 	b := bot.NewModifiedBot(bot.InitBot(cfg.BotToken), &models.UserModel{Db: db})
 
 	handler := delivery.NewHandler(b)
