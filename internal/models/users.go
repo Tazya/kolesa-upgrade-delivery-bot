@@ -1,7 +1,6 @@
 package models
 
 import (
-	"log"
 	"strconv"
 
 	"gorm.io/gorm"
@@ -30,12 +29,11 @@ func (u *User) Recipient() string {
 	return strconv.Itoa(int(u.ChatId))
 }
 
-func (m *UserModel) GetAllUsers() ([]User, error) {
+func (m *UserModel) GetUsersWithLimit(limit int, offset int) ([]User, error) {
 	var users []User
 
-	res := m.Db.Find(&users)
+	res := m.Db.Limit(limit).Offset(offset).Find(&users)
 	if res.Error != nil {
-		log.Println(res.Error.Error())
 		return nil, res.Error
 	}
 
@@ -45,11 +43,21 @@ func (m *UserModel) GetAllUsers() ([]User, error) {
 func (m *UserModel) FindOne(telegramId int64) (*User, error) {
 	existUser := User{}
 	result := m.Db.First(&existUser, User{TelegramId: telegramId})
-		
 
 	if result.Error != nil {
 		return nil, result.Error
 	}
 
 	return &existUser, nil
+}
+
+func (m *UserModel) GetUsersCount() (int, error) {
+	var lastRecord User
+
+	res := m.Db.Last(&lastRecord)
+	if res.Error != nil {
+		return 0, res.Error
+	}
+
+	return int(lastRecord.ID), nil
 }
