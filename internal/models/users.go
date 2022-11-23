@@ -52,12 +52,12 @@ func (m *UserModel) FindOne(telegramId int64) (*User, error) {
 }
 
 func (m *UserModel) GetUsersCount() (int, error) {
-	var lastRecord User
+	var count int64
 
-	res := m.Db.Last(&lastRecord)
+	res := m.Db.Table("users").Count(&count)
 	if res.Error != nil {
-		return 0, res.Error
+		return 0, nil
 	}
 
-	return int(lastRecord.ID), nil
+	return int(count), nil
 }
