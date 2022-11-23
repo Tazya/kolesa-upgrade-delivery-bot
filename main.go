@@ -19,6 +19,7 @@ func main() {
 	flag.Parse()
 
 	var wg sync.WaitGroup
+
 	cfg, err := config.NewConfig(*configPath)
 	if err != nil {
 		log.Fatalf("config: %s\n", err)
@@ -28,12 +29,13 @@ func main() {
 	if err != nil {
 		log.Fatalf("database initialization error: %s\n", err)
 	}
-	b := bot.NewModifiedBot(bot.InitBot(cfg.BotToken), &models.UserModel{Db: db})
 
+	b := bot.NewModifiedBot(bot.InitBot(cfg.BotToken), &models.UserModel{Db: db})
 	handler := delivery.NewHandler(b)
 	server := server.NewServer(*cfg, handler)
 
 	log.Printf("Starting server...\nhttp://localhost:%v\n", cfg.Addr)
+
 	wg.Add(2)
 	go func() {
 		server.Srv.ListenAndServe()
